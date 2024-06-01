@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import connectDB from './db/index.js';
+import userRoutes from './routes/user.routes.js';
 dotenv.config({
     path: './.env'
 })
@@ -21,6 +22,8 @@ app.use(express.urlencoded({extended: true, limit: "50kb"}));
 app.use(express.static("public"));
 
 app.use(cookieParser()); 
+
+app.use("/api/users", userRoutes);
 
 const PORT = process.env.PORT || 8000;
 connectDB()
