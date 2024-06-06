@@ -1,22 +1,50 @@
 import React,{useRef, useEffect} from 'react';
 import {auth, GoogleProvider, OutlookProvider, signInWithPopup} from '../config/firebase-config.js';
-import { useNavigate } from 'react-router-dom';
+import {BASE_URL} from "../Constants.js";
+import axios from 'axios';
+import {useNavigate} from 'react-router-dom';
 
-const LoginModal = ({onClose, setIsAuthenticated}) => {
+const LoginModal = ({onClose}) => {
     let menuRef = useRef();
     const navigate = useNavigate();
+    const sendUserData = async(currUser, token)=>{
+        try {
+            const response = await axios.post(`${BASE_URL}/api/users/login`, currUser);
+            if(response.status === 200){
+                window.localStorage.setItem('isAuthenticated',true);
+                window.localStorage.setItem('token',token);
+                window.localStorage.setItem("user", JSON.stringify(response.data.data));
+                onClose();
+                navigate("/home");
+            }else{
+                throw new Error("Login Failed");
+            }
+        } catch (error) {
+            console.log("Error in sending user data ", error);
+        }
+    }
+    GoogleProvider.setCustomParameters({
+        prompt: 'select_account'
+    });
+    OutlookProvider.setCustomParameters({
+        prompt: 'select_account'
+    });
     const loginWithGoogle = async () => {
         try {
             const result = await signInWithPopup(auth, GoogleProvider);
             if(!result){
                 throw new Error("Google Login Failed");
             }
-            setIsAuthenticated(true);
-            window.localStorage.setItem('isAuthenticated',true);
-            navigate('/profile/id');
-            console.log(result.user);
+            const currUser = {
+                username: result.user.email.split("@")[0],
+                email: result.user.email,
+                fullName: result.user.displayName,
+                profileUrl: result.user.photoURL? result.user.photoURL: "",
+            };
+            sendUserData(currUser,result.user.accessToken);
         } catch (error) {
             console.log("Google Login Failed ", error);
+            console.log("Login failed through this email: ",error.customData.email);
         }
     }
     
@@ -26,11 +54,16 @@ const LoginModal = ({onClose, setIsAuthenticated}) => {
             if(!result){
                 throw new Error("Outlook Login Failed");
             }
-            setIsAuthenticated(true);
-            navigate('/profile/id');
-            console.log(result.user);
+            const currUser = {
+                username: result.user.email.split("@")[0],
+                email: result.user.email,
+                fullName: result.user.displayName,
+                profileUrl: result.user.photoURL? result.user.photoURL: "",
+            };
+            sendUserData(currUser, result.user.accessToken);
         } catch (error) {
-            console.log("Outlook Login Failed ", error);
+            console.log("Outlook Login Failed ", error.message);
+            console.log("Login failed through this email: ",error.customData.email);
         }
     }
 

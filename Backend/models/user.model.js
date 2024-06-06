@@ -23,7 +23,6 @@ const userSchema = new Schema({
     },
     profileUrl: {
         type: String,
-        required: true,
     },
     savedProblems:[{
         type: Schema.Types.ObjectId,
@@ -33,10 +32,14 @@ const userSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "Problem"
     }],
-    token:{
-        type: String,
-        required: true
-    }
+    createdPosts:[{
+        type: Schema.Types.ObjectId,
+        ref: "Post"
+    }],
+    savedPosts:[{
+        type: Schema.Types.ObjectId,
+        ref: "Post"
+    }],
 },{timestamps: true});
 
 export const User = mongoose.model("User", userSchema);

@@ -1,38 +1,36 @@
 import {asyncHandler} from "../utils/asyncHandler.js";
 import { User } from "../models/user.model.js";
-import admin from "../config/firebase-config.js";
 import {ApiError} from "../utils/ApiError.js"
-import {deleteFromCloudinary, uploadOnCloudinary} from "../utils/cloudinary.js"
 import {ApiResponse} from "../utils/ApiResponse.js";
-import jwt from "jsonwebtoken";
 
 const loginUser = asyncHandler(async (req,res) => {
-    if(!req.header.authorization){
-        throw new ApiError(401, "Unauthorized Invalid Token");
-    }
-
-    const token = req.header.authorization.split(" ")[1];
+    if(!req.body) throw new ApiError(400, "Request body is missing");
     try {
-        const decodedValue = await admin.auth().verifyIdToken(token);
-        if(!decodedValue){
-            throw new ApiError(500, "Unauthorized User");
-        }
-        const userExists = await User.findOne({email:decodedValue.email});  
+        const {username, email, fullName, profileUrl} = req.body;
+        const userExists = await User.findOne({email:email});  
         if(!userExists){
             const newUser = new User({
-                username: decodedValue.email.split("@")[0],
-                email: decodedValue.email,
-                fullName: decodedValue.name,
-                profileUrl: decodedValue.picture,
+                username: username,
+                email: email,
+                fullName: fullName,
+                profileUrl: profileUrl,
             });
             await newUser.save();
-            return res.status(200).json(new ApiResponse(200, "User Created", newUser));
+            return res.status(200).json(new ApiResponse(200,newUser, "User Created" ));
         }else{
-            return res.status(200).json(new ApiResponse(200, "User Logged In", userExists));
+            return res.status(200).json(new ApiResponse(200,userExists, "User Logged In"));
         }
     } catch (error) {
-        throw new ApiError(500, "Internal Server Error");
+        throw new ApiError(500, `Internal server error: ${error.message}`);
     }
 });
+
+const getUser = asyncHandler(async (req,res) => {});
+
+const updateProfilePicture = asyncHandler(async (req,res) => {});
+
+const updateProfile = asyncHandler(async (req,res) => {});
+
+const getAllUsers = asyncHandler(async (req,res) => {});
 
 export {loginUser};

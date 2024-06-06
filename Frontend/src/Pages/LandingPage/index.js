@@ -1,18 +1,16 @@
 import React, {useState} from "react";
 import LoginModal from "../../Components/LoginModal.js";
-import Community from "../Community/index.js";
+import Community from "../Home/index.js";
 import {useNavigate} from 'react-router-dom';
 
 const LandingPage = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false || window.localStorage.getItem('isAuthenticated')===true);
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
-
   const handleClick = () => {
-    if(!isAuthenticated){
+    if(!window.localStorage.getItem('isAuthenticated')){
       setShowModal(true);
     }else{
-      navigate('/community');
+      navigate('/home');
     }
   };
 
@@ -20,7 +18,7 @@ const LandingPage = () => {
     <div className="flex-col p-4 w-full">
       <div className="bg-black p-4 rounded-lg flex justify-between items-center px-6">
         <div className="text-white font-bold text-2xl sm:text-3xl md:text-4xl">ZCod3r</div>
-        <div className="text-sm sm:text-lg cursor-pointer font-bold bg-[#D9D9D9] p-2 rounded-lg flex items-center gap-2 hover:scale-90 transition" onClick={handleClick} setIsAuthenticated={setIsAuthenticated}>
+        <div className="text-sm sm:text-lg cursor-pointer font-bold bg-[#D9D9D9] p-2 rounded-lg flex items-center gap-2 hover:scale-90 transition" onClick={handleClick}>
           <span>GET STARTED</span>
           <img src="diagonal-arrow.svg" className="h-8" />
         </div>

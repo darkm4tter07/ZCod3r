@@ -1,41 +1,27 @@
-import React, {useEffect, useState} from 'react'
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import React, {useState, useEffect} from 'react'
+import {Route, Routes, useNavigate, Outlet, Navigate } from "react-router-dom";
 import LandingPage from './Pages/LandingPage/index.js'
 import Profile from './Pages/Profile/index.js';
-import Community from './Pages/Community/index.js';
-import auth from './config/firebase-config.js';
-import { validateUser } from './Api/index.js';
+import Home from './Pages/Home/index.js';
+
+const ProtectedRoutes = () =>{
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    return window.localStorage.getItem('isAuthenticated');
+  });
+  return isAuthenticated ? <Outlet/> : <Navigate to='/'/>;
+}
+
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false || window.localStorage.getItem('isAuthenticated')===true);
-
-  useEffect(() => {
-    auth.onAuthStateChanged((user) => {
-      if (user) {
-        user.getIdToken().then((token)=>{
-          window.localStorage.setItem('isAuthenticated', true);
-          window.localStorage.setItem('token', token);
-          setIsAuthenticated(true);
-          validateUser(token).then((response)=>{
-            console.log(response.data);
-          }).catch((error)=>{
-            console.log(error);
-          })
-        })
-      } else {
-        setIsAuthenticated(false);
-        window.localStorage.setItem('isAuthenticated', false);
-      }
-    });
-  }, []);
-
   return (
-    <BrowserRouter>
+    <>
       <Routes>
         <Route path='/' element={<LandingPage/>}/>
-        <Route path='/profile/:id' element={<Profile/>}/>
-        <Route path='/community' element={<Community/>}/>
+        <Route element={<ProtectedRoutes/>}>
+          <Route path='/profile/:id' element={<Profile/>}/>
+          <Route path='/home' element={<Home/>}/>
+        </Route>
       </Routes>
-    </BrowserRouter>
+    </>
   )
 }
 

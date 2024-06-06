@@ -1,9 +1,14 @@
 import React from 'react'
+import { useParams } from 'react-router-dom';
 
-const index = () => {
+const Profile = () => {
+  const {id} = useParams();
+  const user = JSON.parse(window.localStorage.getItem('user')) || []; 
   return (
-    <div>index</div>
+    <div>
+      {user && (<div>Welcome {user.fullName}</div>)}
+    </div>
   )
 }
 
-export default index
+export default Profile;

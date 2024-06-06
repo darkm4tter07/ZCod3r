@@ -17,4 +17,4 @@ export const LANGUAGE_VERSIONS = {
     php: "<?php\n\n$name = 'Alex';\necho $name;\n",
   };
 
-export const BASE_URL = "http://localhost:3000/";
+export const BASE_URL = "http://localhost:3000";
