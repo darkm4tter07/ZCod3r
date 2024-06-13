@@ -4,6 +4,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import connectDB from './db/index.js';
 import userRoutes from './routes/user.routes.js';
+import postRoutes from './routes/post.routes.js'
 dotenv.config({
     path: './.env'
 })
@@ -25,6 +26,7 @@ app.use(express.static("public"));
 app.use(cookieParser()); 
 
 app.use("/api/users", userRoutes);
+app.use("/api/posts", postRoutes);
 
 const PORT = process.env.PORT || 8000;
 connectDB()

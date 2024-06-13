@@ -7,3 +7,21 @@ body{
     background: #EDF4D3;
     font-family: "Plus Jakarta Sans", sans-serif;
 }
+/* ::-webkit-scrollbar {
+    width: 10px;
+    overflow: hidden;
+}
+
+::-webkit-scrollbar-track{
+    background: #373737;
+}
+::-webkit-scrollbar-thumb {
+    background: #7b7b7b;
+    border-radius: 20px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+::-webkit-scrollbar-thumb:hover {
+    background-color: #555555;
+} */

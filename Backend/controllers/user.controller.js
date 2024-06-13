@@ -21,11 +21,11 @@ const loginUser = asyncHandler(async (req, res) => {
         await newUser.save();
         return res
             .status(200)
-            .json(new ApiResponse(200, newUser, "User Created"));
+            .json(new ApiResponse(200,  "User Created", newUser));
     } else {
         return res
             .status(200)
-            .json(new ApiResponse(200, userExists, "User Logged In"));
+            .json(new ApiResponse(200, "User Logged In", userExists));
     }
 });
 
@@ -38,9 +38,9 @@ const getUser = asyncHandler(async (req, res) => {
     if (!user) {
         return res
             .status(203)
-            .json(new ApiResponse(203, null, "User not found"));
+            .json(new ApiResponse(203, "User not found", null));
     }
-    return res.status(200).json(new ApiResponse(200, user, "User found"));
+    return res.status(200).json(new ApiResponse(200, "User found", user));
 });
 
 const updateProfilePicture = asyncHandler(async (req, res) => {
@@ -65,12 +65,30 @@ const updateProfilePicture = asyncHandler(async (req, res) => {
     }
     return res
         .status(200)
-        .json(new ApiResponse(200, user, "Profile Picture Updated"));
+        .json(new ApiResponse(200, "Profile Picture Updated", user));
 
 });
 
-const updateProfile = asyncHandler(async (req, res) => {});
+const updateProfile = asyncHandler(async (req, res) => {
+    const username = req.params.username;
+    if(!username){
+        throw new ApiError(400, "User id is missing");
+    }
+    const {} = req.body;
+    const user = await User.find({username: username});
+    if (!user) {
+        throw new ApiError(404, "User not found");
+    }
+    
+    //user updtation logic
+
+
+    await user.save({ validateBeforeSave: false });
+    return res
+        .status(200)
+        .json(new ApiResponse(200, "Profile Updated", user));
+});
 
 const getAllUsers = asyncHandler(async (req, res) => {});
 
-export { loginUser };
+export { loginUser, getUser, updateProfilePicture, updateProfile, getAllUsers};
