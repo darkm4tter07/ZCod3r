@@ -54,11 +54,22 @@ const getSinglePost = asyncHandler(async (req,res) => {
     if(!post){
         throw new ApiError(404, "Post not found");
     }
-    return res.status(200).json(new ApiResponse(200, post, "Post found"));
+    return res.status(200).json(new ApiResponse(200, "Post found", post));
 });
 
 const getPosts = asyncHandler(async (req,res) => {
     //pagination
+    const limit = req.query.limit ? parseInt(req.query.limit) : 10;
+    const skip = req.query.skip ? parseInt(req.query.skip) : 0;
+    //skip(n) skips the first n documents
+    //limit(n) limits the number of documents to be returned
+    const posts = await Post.find().skip(skip).limit(limit).populate("createdBy", "username fullName profileUrl");
+
+    if(posts.length === 0){
+        throw new ApiError(404, "No posts found");
+    }
+    return res.status(200).json(new ApiResponse(200,  "Posts found", posts));
+    
 });
 
 const deletePost = asyncHandler(async (req,res) => {

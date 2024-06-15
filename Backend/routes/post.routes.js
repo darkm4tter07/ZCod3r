@@ -5,4 +5,8 @@ const router = Router();
 
 router.route('/create').post(upload.array('imageFiles'), createPost);
 
+router.route('/:postId').get(getSinglePost);
+
+router.route('/').get(getPosts);
+
 export default router;
