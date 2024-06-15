@@ -37,7 +37,7 @@ const createPost = asyncHandler(async (req, res) => {
     const post = new Post({
         title,
         body,
-        tags,
+        tags: tags.slice(0, 5),
         imageLinks: uploadedImages.map(image => image.secure_url),
         createdBy
     });
@@ -59,14 +59,14 @@ const getSinglePost = asyncHandler(async (req,res) => {
 
 const getPosts = asyncHandler(async (req,res) => {
     //pagination
-    const limit = req.query.limit ? parseInt(req.query.limit) : 10;
+    const limit = req.query.limit ? parseInt(req.query.limit) : 1;
     const skip = req.query.skip ? parseInt(req.query.skip) : 0;
     //skip(n) skips the first n documents
     //limit(n) limits the number of documents to be returned
     const posts = await Post.find().skip(skip).limit(limit).populate("createdBy", "username fullName profileUrl");
 
     if(posts.length === 0){
-        throw new ApiError(404, "No posts found");
+        return res.status(200).json(new ApiResponse(200, "No posts found", null));
     }
     return res.status(200).json(new ApiResponse(200,  "Posts found", posts));
     
@@ -85,10 +85,33 @@ const deletePost = asyncHandler(async (req,res) => {
     return res.status(200).json(new ApiResponse(200, "Post deleted successfully", null));
 });
 
-const likePost = asyncHandler(async (req,res) => {});
+const toggleLike = asyncHandler(async (req, res) => {
+    const postId = req.params.postId;
+    const userId = req.query.userId;
+  
+    const post = await Post.findById(postId);
+    if (!post) {
+      throw new ApiError(404, 'Post not found');
+    }
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new ApiError(404, 'User not found');
+    }
+    const isLiked = post.likes.includes(user._id);
+    if (isLiked) {
+      post.likes = post.likes.filter(like => like.toString() !== user._id.toString());
+    } else {
+      post.likes.push(user._id);
+    }
+  
+    await post.save();
+    return res.status(200).json(new ApiResponse(200, 'Like toggled successfully', post));
+  });
 
-const commentOnPost = asyncHandler(async (req,res) => {});
+const commentOnPost = asyncHandler(async (req,res) => {
+
+});
 
 const replyToComment = asyncHandler(async (req,res) => {});
 
-export {createPost, getSinglePost, getPosts, deletePost, likePost, commentOnPost, replyToComment};
+export {createPost, getSinglePost, getPosts, deletePost, toggleLike, commentOnPost, replyToComment};

@@ -32,7 +32,7 @@ const contests = [
 const SideBar = ({openSidebar}) => {
   const location = useLocation();
   return (
-    <div className={`absolute left-0 top-28 my-4 mx-4 min-h-[520px] bg-white rounded-lg border-[3px] border-black w-44 ${!openSidebar?"hidden": ""} md:block`}>
+    <div className={`absolute left-0 top-24 my-4 mx-4 min-h-[520px] bg-white rounded-lg border-[3px] border-black w-44 ${!openSidebar?"hidden": ""} md:block z-50`} >
         {
           (<div className='flex flex-col justify-center p-4 border-b-2 border-gray-600 mx-1'>
             {["Home", "Problems", "Saved"].map((item, ind)=>(
