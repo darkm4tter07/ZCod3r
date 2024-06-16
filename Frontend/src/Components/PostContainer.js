@@ -23,7 +23,7 @@ const PostContainer = () => {
 
   const handleScroll = (e) => {
     const {offsetHeight, scrollTop, scrollHeight} = e.target;
-    if(scrollTop + offsetHeight >= scrollHeight-5){
+    if(scrollTop + offsetHeight >= scrollHeight){
       setSkip(posts?.length);
       console.log('Fetching more posts');
     }

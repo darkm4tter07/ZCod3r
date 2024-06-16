@@ -50,19 +50,21 @@ const createPost = asyncHandler(async (req, res) => {
 
 const getSinglePost = asyncHandler(async (req,res) => {
     const postId = req.params.postId;
-    const post = await Post.findById(postId).populate("createdBy", "username profileUrl");
+    const post = await Post.findById(postId).populate("createdBy", "fullName username profileUrl");
     if(!post){
         throw new ApiError(404, "Post not found");
     }
     return res.status(200).json(new ApiResponse(200, "Post found", post));
 });
 
+/*pagination
+    skip(n) skips the first n documents
+    limit(n) limits the number of documents to be returned*/
+
 const getPosts = asyncHandler(async (req,res) => {
-    //pagination
-    const limit = req.query.limit ? parseInt(req.query.limit) : 1;
+    const limit = req.query.limit ? parseInt(req.query.limit) : 5;
     const skip = req.query.skip ? parseInt(req.query.skip) : 0;
-    //skip(n) skips the first n documents
-    //limit(n) limits the number of documents to be returned
+    
     const posts = await Post.find().skip(skip).limit(limit).populate("createdBy", "username fullName profileUrl");
 
     if(posts.length === 0){
@@ -109,9 +111,48 @@ const toggleLike = asyncHandler(async (req, res) => {
   });
 
 const commentOnPost = asyncHandler(async (req,res) => {
-
+    const [comment, postId, userId] = [req.body.comment, req.params.postId, req.query.userId];
+    if(!comment){
+        throw new ApiError(400, "Comment is required");
+    }
+    const post = await Post.findById(postId);
+    if(!post){
+        throw new ApiError(404, "Post not found");
+    }
+    const user = await User.findById(userId);
+    if(!user){
+        throw new ApiError(404, "User not found");
+    }
+    const commentadded = new Comment({
+        comment,
+        createdBy: userId,
+        post: postId
+    })
+    await post.save();
+    return res.status(201).json(new ApiResponse(201, "Comment added successfully", post));
 });
 
-const replyToComment = asyncHandler(async (req,res) => {});
+const replyToComment = asyncHandler(async (req,res) => {
+    const [comment, commentId, userId] = [req.body.comment, req.params.commentId, req.query.userId];
+    if(!comment){
+        throw new ApiError(400, "Comment is required");
+    }
+    const commentToReply = await Comment.findById(commentId);
+    if(!commentToReply){
+        throw new ApiError(404, "Comment not found");
+    }
+    const user = await User.findById(userId);
+    if(!user){
+        throw new ApiError(404, "User not found");
+    }
+    const reply = new Comment({
+        comment,
+        createdBy: userId,
+        post: commentToReply.post
+    })
+    commentToReply.replies.push(reply._id);
+    await commentToReply.save();
+    return res.status(201).json(new ApiResponse(201, "Reply added successfully", commentToReply));
+});
 
 export {createPost, getSinglePost, getPosts, deletePost, toggleLike, commentOnPost, replyToComment};

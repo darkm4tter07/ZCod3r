@@ -11,4 +11,6 @@ router.route('/').get(getPosts);
 
 router.route('/toggleLike/:postId').put(toggleLike);
 
+router.route('/post/:postId').get(getSinglePost);
+
 export default router;

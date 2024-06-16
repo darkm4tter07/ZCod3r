@@ -44,7 +44,7 @@ const Navbar = ({setOpenSidebar}) => {
           <div className='md:hidden cursor-pointer hover:scale-90' onClick={()=>{
             setOpenSidebar((prev)=>!prev);
           }}>
-            <img src="burger.svg" className='w-8' />
+            <img src="../burger.svg" className='w-8' />
           </div>
             <p>ZCod3r</p>
           </div>
