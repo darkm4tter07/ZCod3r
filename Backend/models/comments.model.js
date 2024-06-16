@@ -1,4 +1,17 @@
-import mongoose, {Schema} from "mongoose";
+import mongoose, { Schema } from "mongoose";
+
+const replySchema = new Schema({
+    reply: {
+        type: String,
+        required: true,
+        trim: true,
+    },
+    repliedBy: {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+        required: true,
+    }
+}, { timestamps: true });
 
 const commentSchema = new Schema({
     comment: {
@@ -11,15 +24,12 @@ const commentSchema = new Schema({
         ref: "User",
         required: true,
     },
-    replies: [{
-        type: Schema.Types.ObjectId,
-        ref: "Comment",
-    }],
-    post:{
+    replies: [replySchema],
+    post: {
         type: Schema.Types.ObjectId,
         ref: "Post",
         required: true,
     }
-}, {timestamps: true});
+}, { timestamps: true });
 
 export const Comment = mongoose.model("Comment", commentSchema);

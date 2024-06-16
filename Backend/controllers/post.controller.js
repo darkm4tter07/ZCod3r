@@ -6,6 +6,7 @@ import { Post } from "../models/post.model.js";
 import {uploadOnCloudinary} from "../utils/cloudinary.js";
 import pLimit from "p-limit";
 
+
 const createPost = asyncHandler(async (req, res) => {
     const { title, body, tags, createdBy } = req.body;
     let imageFiles = [];
@@ -48,6 +49,7 @@ const createPost = asyncHandler(async (req, res) => {
 });
 
 
+
 const getSinglePost = asyncHandler(async (req,res) => {
     const postId = req.params.postId;
     const post = await Post.findById(postId).populate("createdBy", "fullName username profileUrl");
@@ -60,6 +62,8 @@ const getSinglePost = asyncHandler(async (req,res) => {
 /*pagination
     skip(n) skips the first n documents
     limit(n) limits the number of documents to be returned*/
+
+
 
 const getPosts = asyncHandler(async (req,res) => {
     const limit = req.query.limit ? parseInt(req.query.limit) : 5;
@@ -74,6 +78,8 @@ const getPosts = asyncHandler(async (req,res) => {
     
 });
 
+
+
 const deletePost = asyncHandler(async (req,res) => {
     const postId = req.params.postId;
     const post = await Post.findById(postId);
@@ -86,6 +92,9 @@ const deletePost = asyncHandler(async (req,res) => {
     await post.remove();
     return res.status(200).json(new ApiResponse(200, "Post deleted successfully", null));
 });
+
+
+
 
 const toggleLike = asyncHandler(async (req, res) => {
     const postId = req.params.postId;
@@ -110,6 +119,8 @@ const toggleLike = asyncHandler(async (req, res) => {
     return res.status(200).json(new ApiResponse(200, 'Like toggled successfully', post));
   });
 
+
+
 const commentOnPost = asyncHandler(async (req,res) => {
     const [comment, postId, userId] = [req.body.comment, req.params.postId, req.query.userId];
     if(!comment){
@@ -132,27 +143,29 @@ const commentOnPost = asyncHandler(async (req,res) => {
     return res.status(201).json(new ApiResponse(201, "Comment added successfully", post));
 });
 
+
+
+
 const replyToComment = asyncHandler(async (req,res) => {
-    const [comment, commentId, userId] = [req.body.comment, req.params.commentId, req.query.userId];
-    if(!comment){
-        throw new ApiError(400, "Comment is required");
+    const [reply, commentId, userId] = [req.body.reply, req.params.commentId, req.query.userId];
+    if(!reply){
+        throw new ApiError(400, "Reply is required");
     }
-    const commentToReply = await Comment.findById(commentId);
-    if(!commentToReply){
+    const comment = await Comment.findById(commentId);
+    if(!comment){
         throw new ApiError(404, "Comment not found");
     }
     const user = await User.findById(userId);
     if(!user){
         throw new ApiError(404, "User not found");
     }
-    const reply = new Comment({
-        comment,
-        createdBy: userId,
-        post: commentToReply.post
-    })
-    commentToReply.replies.push(reply._id);
-    await commentToReply.save();
-    return res.status(201).json(new ApiResponse(201, "Reply added successfully", commentToReply));
+    const replyAdded = {
+        reply,
+        repliedBy: userId
+    }
+    comment.replies.push(replyAdded);
+    await comment.save();
+    return res.status(201).json(new ApiResponse(201, "Reply added successfully", comment));
 });
 
 export {createPost, getSinglePost, getPosts, deletePost, toggleLike, commentOnPost, replyToComment};
