@@ -12,9 +12,7 @@ dotenv.config({
 const app = express();
 
 app.use(cors({
-    origin: process.env.CORS_ORIGIN,
-    credentials: true,
-    optionsSuccessStatus: 200,
+    origin:[process.env.CORS_ORIGIN1, process.env.CORS_ORIGIN2]
 }));
 
 app.use(express.json({limit: "30mb"}));
