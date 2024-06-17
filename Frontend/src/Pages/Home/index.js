@@ -8,8 +8,10 @@ const Home = () => {
   const [openSidebar, setOpenSidebar] = useState(false);
   const [openCreatePost, setOpenCreatePost] = useState(false);
   return (
-    <div className='h-screen flex flex-col pt-4'>
-      <Navbar setOpenSidebar={setOpenSidebar}/>
+    <div className='h-screen flex flex-col pt-4 w-full'>
+      <div className='w-screen'>
+        <Navbar setOpenSidebar={setOpenSidebar}/>
+      </div>
       <div className='flex h-full'>
         <SideBar openSidebar={openSidebar}/>
         <PostContainer/>

@@ -14,7 +14,7 @@ const replySchema = new Schema({
 }, { timestamps: true });
 
 const commentSchema = new Schema({
-    comment: {
+    message: {
         type: String,
         required: true,
         trim: true,

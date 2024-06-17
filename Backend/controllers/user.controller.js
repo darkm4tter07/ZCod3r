@@ -34,7 +34,7 @@ const getUser = asyncHandler(async (req, res) => {
         throw new ApiError(400, "User id is missing");
     }
     const username = req.params.username;
-    const user = await User.find({username: username});
+    const user = await User.findOne({username: username});
     if (!user) {
         return res
             .status(203)

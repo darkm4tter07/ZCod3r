@@ -34,7 +34,7 @@ const PostContainer = () => {
   }, [skip]);
 
   return (
-    <div  className='m-4 p-2 overflow-y-auto flex-1 md:ml-52 flex flex-col gap-6  items-center ' onScroll={handleScroll}>
+    <div  className='m-4 p-2 overflow-y-auto flex-1 md:ml-52 flex flex-col gap-6 items-center mt-24' onScroll={handleScroll}>
       {posts.length>0 && posts.map(post => (
         <Post key={post._id} post={post} />
       ))}

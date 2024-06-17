@@ -39,8 +39,8 @@ const Navbar = ({setOpenSidebar}) => {
     const userId = window.localStorage.getItem('user') ? JSON.parse(window.localStorage.getItem('user')).username : '';
     
   return (
-    <div className="bg-black p-4 rounded-lg flex justify-between items-center px-6 mx-4">
-        <div className="text-white font-bold text-3xl md:text-4xl flex gap-4 items-center">
+    <div className="bg-black p-4 rounded-lg flex justify-between items-center px-6 mx-4 fixed top-4 left-0 right-0 z-50">
+        <div className="text-white font-bold text-3xl md:text-4xl flex gap-4 items-center w-full">
           <div className='md:hidden cursor-pointer hover:scale-90' onClick={()=>{
             setOpenSidebar((prev)=>!prev);
           }}>
