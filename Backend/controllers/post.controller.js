@@ -14,7 +14,7 @@ const createPost = asyncHandler(async (req, res) => {
     if (!title || !createdBy || !body) {
         throw new ApiError(400, "Title and createdBy fields are required");
     }
-    if (Array.isArray(req.files)) {
+    if(req.files && Array.isArray(req.files)) {
         imageFiles = req.files.map((file) => file.path);
     } else {
         console.log("User has not uploaded any image files");
@@ -38,7 +38,7 @@ const createPost = asyncHandler(async (req, res) => {
     const post = new Post({
         title,
         body,
-        tags: tags.slice(0, 5),
+        tags: tags?.slice(0, 5),
         imageLinks: uploadedImages.map((image) => image.secure_url),
         createdBy,
     });
