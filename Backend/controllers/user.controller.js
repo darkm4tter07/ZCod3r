@@ -34,7 +34,20 @@ const getUser = asyncHandler(async (req, res) => {
         throw new ApiError(400, "User id is missing");
     }
     const username = req.params.username;
-    const user = await User.findOne({username: username});
+    const user = await User.findOne({username: username}).populate({
+        path: 'createdPosts',
+        select: 'title imageLinks createdAt',
+    }).populate({
+        path: 'savedPosts',
+        select: 'title imageLinks createdAt',
+    }).populate({
+        path: 'following',
+        select: 'fullName username profileUrl'
+    })
+    .populate({
+        path: 'followers',
+        select: 'fullName username profileUrl'
+    });
     if (!user) {
         return res
             .status(203)
@@ -89,6 +102,34 @@ const updateProfile = asyncHandler(async (req, res) => {
         .json(new ApiResponse(200, "Profile Updated", user));
 });
 
+const toggleFollowing = asyncHandler(async (req, res) => {
+    const { userId, followId } = req.body;
+    const user = await User.findById(userId);
+    const followUser = await User.findById(followId);
+
+    if (!user || !followUser) {
+        throw new ApiError(404, "User not found");
+    }
+
+    const isFollowing = user.following.includes(followId);
+
+    if (isFollowing) {
+        user.following = user.following.filter((id) => id.toString() !== followId.toString());
+        followUser.followers = followUser.followers.filter((id) => id.toString() !== userId.toString());
+    } else {
+        user.following.push(followId);
+        followUser.followers.push(userId);
+    }
+
+    await user.save({ validateBeforeSave: false });
+    await followUser.save({ validateBeforeSave: false });
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, "Following Toggled", user));
+});
+
+
 const getAllUsers = asyncHandler(async (req, res) => {});
 
-export { loginUser, getUser, updateProfilePicture, updateProfile, getAllUsers};
+export { loginUser, getUser, updateProfilePicture, updateProfile, getAllUsers, toggleFollowing};

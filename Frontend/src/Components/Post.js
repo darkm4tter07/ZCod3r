@@ -42,17 +42,17 @@ const Post = ({post}) => {
         console.error('Error toggling like:', error);
       }
     };
-  
-    const postComment = async () => {};
     
     return (
-      <div className='flex flex-col bg-white border-2 border-black rounded-lg p-4 '>
+      <div className='flex flex-col bg-white border-2 border-black rounded-lg p-4 md:w-[720px] min-w-80'>
         {/* Post Header */}
         <div className='flex w-full gap-2'>
           <div className='w-12 h-12 rounded-full border-2 border-black bg-center bg-cover' style={{backgroundImage: `url(${post.createdBy.profileUrl})`}}></div>
           <div className='flex flex-col'>
             <div className='uppercase font-bold'>{post.createdBy.fullName}</div>
-            <div className='hover:underline cursor-pointer hover:text-blue-800 text-sm opacity-65'>{post.createdBy.username}</div>
+            <div className='hover:underline cursor-pointer hover:text-blue-800 text-sm opacity-65' onClick={()=>{
+              window.location.href=`/profile/${post.createdBy.username}`;
+            }}>{post.createdBy.username}</div>
           </div>
           <div className='flex gap-2 h-6 ml-auto flex-wrap '>
             {post.tags.map((tag, ind) => (
@@ -92,7 +92,11 @@ const Post = ({post}) => {
                 <p className='text-2xl font-bold'>{post.likes.length}</p>
               </div>
               <div className='flex gap-2'>
-                <img src='../comment.svg' className='h-8'/>
+                <img src='../comment.svg' className='h-8 cursor-pointer hover:scale-105' onClick={()=>{
+                  if(location.pathname==='/home'){
+                    window.location.href=`/post/${post._id}`;
+                  }
+                }}/>
                 <p className='text-2xl font-bold'>{post.comments.length}</p>
               </div>
               {location.pathname==='/home' && (
