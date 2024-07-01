@@ -5,7 +5,6 @@ import { timeAgo } from '../Constants';
 const CreatedPosts = () => {
     const navigate = useNavigate();
     const {user} = useOutletContext();
-    console.log(user);
   return (
     <div className='overflow-y-auto flex p-2 h-full gap-2'>
         {user?.createdPosts?.length==0 && <div className='font-semibold text-2xl'>No posts</div>}

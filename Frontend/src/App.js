@@ -8,6 +8,7 @@ import Followers from './Components/Followers.js';
 import Following from './Components/Following.js';
 import CreatedPosts from './Components/CreatedPosts.js';
 import SavedPosts from './Components/SavedPosts.js';
+import ChatPage from './Pages/ChatPage/index.js';
 
 const ProtectedRoutes = () =>{
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
@@ -26,10 +27,14 @@ function App() {
           <Route path='/post/:postId' element={<PostPage/>}/>
           <Route path='/profile/:id' element={<Profile/>}>
             <Route path='posts' element={<CreatedPosts/>}/>
-            <Route path='saved' element={<SavedPosts/>}/>
+            <Route path='saved' element={<SavedPosts/> }/>
             <Route path='followers' element={<Followers/>}/>
             <Route path='following' element={<Following/>}/>
             <Route path='solved' element={<div>Solved</div>}/>
+          </Route>
+          <Route path='/chats' element={<ChatPage/>}>
+            <Route path=':id' element={<div>Chat with user</div>}/>
+            <Route path='group/:id' element={<div>Chat with group</div>}/>
           </Route>
           <Route path='*' element={<Navigate to='/'/>}/>
         </Route>

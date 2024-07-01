@@ -129,7 +129,50 @@ const toggleFollowing = asyncHandler(async (req, res) => {
         .json(new ApiResponse(200, "Following Toggled", user));
 });
 
+const getTopCoders = asyncHandler( async(req,res)=>{
+    const users = await User.aggregate([
+        {
+            $project:{
+                fullName: 1,
+                profileUrl: 1,
+                username: 1,
+                solvedProblemsCount: {$size: "$solvedProblems"},
+                createdPostsCount: { $size: "$createdPosts" }
+            }
+        },
+        {
+            $sort: {
+                solvedProblemsCount: -1,
+                createdPostsCount: -1
+            }
+        },
+        {
+            $limit: 5
+        }
+    ])
 
-const getAllUsers = asyncHandler(async (req, res) => {});
+    if (!users || users.length === 0) {
+        throw new ApiError(404, "Users not found");
+    }
+    
+    return res.status(200).json(new ApiResponse(200, "Top Coders", users));
+});
 
-export { loginUser, getUser, updateProfilePicture, updateProfile, getAllUsers, toggleFollowing};
+const searchUsers = asyncHandler(async (req, res) => {
+    const {query} = req.query;
+    if(!query){
+        return res.status(200).json(new ApiResponse(200, "0 users found", []));
+    }
+    const users = await User.find({
+        $or: [
+            { fullName: { $regex: query, $options: "i" } },
+            { username: { $regex: query, $options: "i" } },
+        ],
+    });
+    if (!users || users.length === 0) {
+        throw new ApiError(404, "Users not found");
+    }
+    return res.status(200).json(new ApiResponse(200, "Users found", users));
+});
+
+export { loginUser, getUser, updateProfilePicture, updateProfile, toggleFollowing, getTopCoders, searchUsers};

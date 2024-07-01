@@ -18,7 +18,7 @@ const Profile = () => {
 
   const fetchUser = async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/api/users/${id}`);
+      const response = await axios.get(`${BASE_URL}/api/users/user/${id}`);
       if (response.status === 200) {
         setUser(response.data.data);
         setError(false);

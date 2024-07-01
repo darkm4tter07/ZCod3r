@@ -5,6 +5,8 @@ import cookieParser from "cookie-parser";
 import connectDB from './db/index.js';
 import userRoutes from './routes/user.routes.js';
 import postRoutes from './routes/post.routes.js'
+import chatRoutes from './routes/chat.routes.js'
+
 dotenv.config({
     path: './.env'
 })
@@ -23,8 +25,11 @@ app.use(express.static("public"));
 
 app.use(cookieParser()); 
 
+
+//Using Routes 
 app.use("/api/users", userRoutes);
 app.use("/api/posts", postRoutes);
+app.use("/api/chats", chatRoutes);
 
 const PORT = process.env.PORT || 8000;
 connectDB()

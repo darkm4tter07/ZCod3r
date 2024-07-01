@@ -1,15 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import {BASE_URL} from "../Constants.js";
 import axios from "axios";
-/*
-{
-    "title": "Post Title",
-    "body": "Post Body",
-    "imageFiles": ["image1.jpg", "image2.jpg"],
-    "tags": ["tag1", "tag2"],
-    "createdBy": "userId"   
-}
-*/
+
 const CreatePost = ({ onCancel }) => {
     const [postData, setPostData] = useState({
         title: "",
