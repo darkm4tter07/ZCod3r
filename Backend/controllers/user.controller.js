@@ -66,7 +66,7 @@ const updateProfilePicture = asyncHandler(async (req, res) => {
         throw new ApiError(400, "User id is missing");
     }
     const avatarUrl = await uploadOnCloudinary(avatarLocalPath);
-    const user = await User.find({username: username});
+    const user = await User.findOne({username: username});
     if (!user) {
         throw new ApiError(404, "User not found");
     }
@@ -88,7 +88,7 @@ const updateProfile = asyncHandler(async (req, res) => {
         throw new ApiError(400, "User id is missing");
     }
     const {} = req.body;
-    const user = await User.find({username: username});
+    const user = await User.findOne ({username: username});
     if (!user) {
         throw new ApiError(404, "User not found");
     }

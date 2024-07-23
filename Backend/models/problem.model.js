@@ -1,32 +1,52 @@
 import mongoose, { Schema } from "mongoose";
 
 const problemSchema = new Schema({
-    title:{
+    title: {
         type: String,
         required: true,
         index: true,
     },
-    description:{
+    description: {
         type: String,
         required: true,
     },
-    difficulty:{
+    difficulty: {
         type: String,
         required: true,
     },
-    solution:{
+    solution: {
         type: String,
-        required: true,
+        default: "Solution for this problem is not posted yet",
     },
-    testcases:{
+    inputFormat: {
+        type: String,
+        required: false,
+    },
+    outputFormat: {
+        type: String,
+        required: false,
+    },
+    example: {
+        type: Object,
+        required: false,
+        properties: {
+            input: { type: String, required: true },
+            output: { type: String, required: true }
+        }
+    },
+    explanation: {
+        type: String,
+        required: false,
+    },
+    testcases: {
         type: Array,
         required: true,
     },
-    testResults:{
+    testResults: {
         type: Array,
         required: true,
     },
-    tags:{
+    tags: {
         type: Array,
         required: true,
     },
@@ -34,6 +54,19 @@ const problemSchema = new Schema({
         type: String,
         required: false,
     },
-},{timestamps: true});
+    notes: {
+        type: String,
+        required: false,
+    },
+    createdBy: {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+        required: true,
+    },
+    isPrivate: {
+        type: Boolean,
+        default: true,
+    },
+}, { timestamps: true });
 
 export const Problem = mongoose.model("Problem", problemSchema);

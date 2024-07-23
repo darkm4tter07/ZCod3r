@@ -46,11 +46,7 @@ const SideBar = ({openSidebar}) => {
       console.error('Error fetching top coders:', error);
     }
   }
-{/* {["Home", "Problems", "Saved"].map((item, ind)=>(
-              <div className={`my-2 p-2 rounded-md hover:invert font-bold cursor-pointer bg-white flex gap-1.5 text-md justify-start 
-                 items-center ${location.pathname===`/${item.toLowerCase()}`?"invert":""} py-2`} key={ind}><img src={`/${item}.svg`} alt={item} className='w-6'/><p>{item.toUpperCase()}</p></div>
-            )
-            )} */}
+
   useEffect(() => {
     fetchTopCoders();
   }, []);

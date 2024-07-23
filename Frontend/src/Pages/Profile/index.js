@@ -1,10 +1,9 @@
 import React, {useState, useEffect, useRef} from 'react'
-import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { BASE_URL } from '../../Constants';
 import Navbar from '../../Components/Navbar';
 import SideBar from '../../Components/SideBar';
-import { Link, Outlet, useLocation } from 'react-router-dom';
+import { Link, Outlet, useLocation, useParams } from 'react-router-dom';
 
 const Profile = () => {
   const location = useLocation();
