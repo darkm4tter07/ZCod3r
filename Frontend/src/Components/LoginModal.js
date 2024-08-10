@@ -26,9 +26,7 @@ const LoginModal = ({onClose}) => {
     GoogleProvider.setCustomParameters({
         prompt: 'select_account'
     });
-    OutlookProvider.setCustomParameters({
-        prompt: 'select_account'
-    });
+     
     const loginWithGoogle = async () => {
         try {
             const result = await signInWithPopup(auth, GoogleProvider);

@@ -9,7 +9,8 @@ import Following from './Components/Following.js';
 import CreatedPosts from './Components/CreatedPosts.js';
 import SavedPosts from './Components/SavedPosts.js';
 import ChatPage from './Pages/ChatPage/index.js';
-import ProblemPage from './Pages/Problems/index.js'
+import ProblemPage from './Pages/Problems/index.js';
+import Problem from './Pages/Problem/index.js';
 
 const ProtectedRoutes = () =>{
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
@@ -38,6 +39,7 @@ function App() {
             <Route path='group/:id' element={<div>Chat with group</div>}/>
           </Route>
           <Route path='/problems' element = {<ProblemPage/>}/>
+          <Route path='/problem/:id' element={<Problem/>}/>
           <Route path='*' element={<Navigate to='/'/>}/>
         </Route>
       </Routes>

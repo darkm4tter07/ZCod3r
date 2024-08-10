@@ -3,6 +3,7 @@ import SideBar from '../../Components/SideBar';
 import Navbar from '../../Components/Navbar';
 import { BASE_URL } from '../../Constants';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 // import {} from 'react-router-dom'; // Unused import
 
 const problemTags = [
@@ -47,6 +48,8 @@ const Index = () => {
   const [difficulty, setDifficulty] = useState(null);
   const [tags, setTags] = useState([]);
   const [availableTags, setAvailableTags] = useState(problemTags);
+  const user = JSON.parse(window.localStorage.getItem("user"));
+  
 
   const fetchProblems = async () => {
     setLoading(true);
@@ -60,7 +63,13 @@ const Index = () => {
           skip: 0
         }
       });
-      setProblems(response.data.data); 
+      if(response.status === 200){
+        if(response.data.data.length === 0){
+          setProblems(null);
+        }else{
+          setProblems(response.data.data);
+        }
+      }
     } catch (error) {
       setError(true);
     }
@@ -98,11 +107,13 @@ const Index = () => {
             <div>Error loading problems</div>
           ) : problems ? (
             problems.map((problem, index) => (
-              <div key={index} className='border-2 border-black p-2 px-4 bg-white rounded-lg cursor-pointer mr-48 flex items-center justify-between hover:scale-[101%] hover:bg-[#d9ff4e] flex-wrap'>
+              <Link to={`/problem/${problem._id}`}><div key={index} className='border-2 border-black p-2 px-4 bg-white rounded-lg cursor-pointer mr-48 flex items-center justify-between hover:scale-[101%] hover:bg-[#d9ff4e] flex-wrap'>
                 <div className='text-wrap font-bold'>{problem.title}</div>
                 <div className={`text-sm ${problem.difficulty==="Easy"? "text-green-600":""} ${problem.difficulty==="Medium"? "text-yellow-600":""}
                 ${problem.difficulty==="Hard"? "text-red-600":""}`}>{problem.difficulty}</div>
+
               </div>
+              </Link>
             ))
           ):(
             <div>No problem available for this filter</div>
