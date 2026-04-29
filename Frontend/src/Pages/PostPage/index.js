@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import { BASE_URL, timeAgo } from "../../Constants";
 import Post from "../../Components/Post";
+import Comments from "../../Components/Comments";
 
 const PostPage = () => {
   const [post, setPost] = useState(null);
@@ -112,6 +113,7 @@ const PostPage = () => {
             {loading && (<div className="flex items-center justify-center h-full w-full">Loading...</div>)}
             {error && (<div className="flex items-center justify-center h-full w-full">Error fetching post</div>)}
             {post && <Post post={post} />}
+            <Comments comments={comments} setSkip={setSkip} commentMessage={commentMessage} />
             {/* Comments */}
             <div className="w-full bg-white border-2 border-black rounded-lg p-4 flex flex-col gap-2">
                 <h1 className="text-xl font-bold">Comments</h1>

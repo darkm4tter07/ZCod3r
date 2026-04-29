@@ -3,173 +3,147 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { BASE_URL } from "../Constants";
 
+const Navbar = () => {
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
+  const [query, setQuery] = useState("");
+  const [users, setUsers] = useState([]);
+  const menuRef = useRef();
+  const searchRef = useRef();
+  const navigate = useNavigate();
 
-const Modal = ({ onClose, userId }) => {
-    const modalRef = useRef();
-    const navigate = useNavigate();
-    const Logout = () => {
-        window.localStorage.clear();
-        onClose();
-        navigate("/");
-        window.location.reload();
+  const user = JSON.parse(localStorage.getItem("user"));
+  const profileImg = user?.profileUrl || "/profile.png";
+  const username = user?.username;
+
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate("/");
+    window.location.reload();
+  };
+
+  useEffect(() => {
+    const handleOutsideClick = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setShowProfileMenu(false);
+      }
+      if (searchRef.current && !searchRef.current.contains(e.target)) {
+        setShowSearch(false);
+      }
     };
-    useEffect(() => {
-        function handleClickOutside(event) {
-            if (modalRef.current && !modalRef.current.contains(event.target)) {
-                onClose();
-            }
-        }
-        document.addEventListener("mousedown", handleClickOutside);
-        return () =>
-            document.removeEventListener("mousedown", handleClickOutside);
-    }, [modalRef]);
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, []);
 
-    return (
-        <div
-            className="absolute border-[3px] bg-white border-black flex flex-col gap-2 right-8 top-20 shadow-2xl rounded-lg p-4 text-black font-semibold"
-            ref={modalRef}
-        >
-            <div className="flex p-2 gap-2 rounded-lg bg-[#EDF4D3] px-10 border-2 border-black cursor-pointer font-semibold hover:bg-[#efffb4]">
-                <Link to={`/profile/${userId}`}>
-                    <div>Profile</div>
-                </Link>
-            </div>
-            <div className="flex p-2 gap-2 rounded-lg bg-[#EDF4D3] px-10 border-2 border-black cursor-pointer font-semibold hover:bg-[#efffb4]">
-                <div onClick={Logout}>Logout</div>
-            </div>
-        </div>
-    );
-};
-
-const SearchUser = ({onClose}) => {
-    const [search, setSearch] = useState("");
-    const searchRef = useRef();
-    const navigate = useNavigate();
-    const [users, setUsers] = useState([]);
+  useEffect(() => {
     const fetchUsers = async () => {
-        if (search === "") {
-            setUsers([]);
-            return;
-        }
-        console.log(search);
-        try {
-            const response = await axios.get(
-                `${BASE_URL}/api/users/search?query=${search}`
-            );
-            if (response.status === 200) {
-                setUsers(response.data.data);
-                console.log(response);
-            } else {
-                setUsers([]);
-            }
-        } catch (error) {
-            setUsers([]);
-            console.error("Error searching users:", error);
-        }
+      if (!query.trim()) {
+        setUsers([]);
+        return;
+      }
+      try {
+        const res = await axios.get(`${BASE_URL}/api/users/search?query=${query}`);
+        setUsers(res.data.data);
+      } catch (err) {
+        setUsers([]);
+      }
     };
+    fetchUsers();
+  }, [query]);
 
-    useEffect(() => {
-      fetchUsers();
-    }, [search]);
+  return (
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-black text-yellowgreen shadow-md font-['JetBrains_Mono']">
+      <div className="flex items-center justify-between px-6 py-3">
+        {/* Terminal Logo */}
+        <Link to="/" className="text-2xl font-bold tracking-tight select-none outline-none focus:outline-none">
+          <span className="text-yellowgreen">ZCod3r</span><span className="text-white">:~$</span>
+        </Link>
 
-    useEffect(() => {
-        function handleClickOutside(event) {
-            if (
-                searchRef.current &&
-                !searchRef.current.contains(event.target)
-            ) {
-                onClose();
-            }
-        }
-        document.addEventListener("mousedown", handleClickOutside);
-        return () =>
-            document.removeEventListener("mousedown", handleClickOutside);
-    }, [searchRef]);
-    return (
-        <div className="absolute w-72 max-h-80 bg-[#d9ff52] p-2 right-4 top-[90px] border-black border-2 rounded-lg flex flex-col items-center" ref={searchRef}>
-            <div className="bg-white w-64 border-black border-2 rounded-lg">
-                <input
-                    type="text"
-                    onChange={(e) => {
-                        setSearch(e.target.value);
-                    }}
-                    className="w-full h-full outline-none text-black bg-transparent p-2"
-                    placeholder="Search Users..."
-                />
-            </div>
-            <div className="flex flex-col gap-2 flex-1 overflow-y-auto w-full p-2">
-                {users.length === 0 && <div className="text-black font-semibold">No users found</div>}
-                {users.map((user, ind) => (
-                    <div className="font-semibold text-black cursor-pointer hover:scale-95 hover:opacity-70" key={ind} onClick={()=>{
+        {/* Search */}
+        <div className="hidden md:flex relative w-1/3">
+          <input
+            type="text"
+            className="bg-[#1a1a1a] text-white w-full py-2 px-4 rounded-lg border border-yellowgreen focus:outline-none focus:ring-2 focus:ring-yellowgreen"
+            placeholder="Search users..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+          {query && (
+            <div ref={searchRef} className="absolute top-12 left-0 w-full max-h-60 overflow-y-auto bg-black border border-yellowgreen rounded-lg shadow-lg z-10">
+              {users.length === 0 ? (
+                <div className="p-3 text-white">No users found</div>
+              ) : (
+                users.map((user, i) => (
+                  <div
+                    key={i}
+                    className="p-3 text-white hover:bg-yellowgreen hover:text-black cursor-pointer"
+                    onClick={() => {
                       navigate(`/profile/${user.username}`);
-                    }}>{user.fullName}</div>
-                ))}
-            </div>
-        </div>
-    );
-};
-
-const Navbar = ({ setOpenSidebar }) => {
-    const [isOpen, setIsOpen] = useState(false);
-    const [isSearchOpen, setIsSearchOpen] = useState(false);
-    const profileImg = window.localStorage.getItem("user")
-        ? JSON.parse(window.localStorage.getItem("user")).profileUrl
-        : "";
-    const userId = window.localStorage.getItem("user")
-        ? JSON.parse(window.localStorage.getItem("user")).username
-        : "";
-
-    return (
-        <div className="bg-black p-4 rounded-lg flex justify-between items-center px-6 mx-4 fixed top-4 left-0 right-0 z-50">
-            <div className="text-white font-bold text-3xl md:text-4xl flex gap-4 items-center w-full">
-                <div
-                    className="md:hidden cursor-pointer hover:scale-90"
-                    onClick={() => {
-                        setOpenSidebar((prev) => !prev);
+                      setQuery("");
+                      setShowSearch(false);
                     }}
-                >
-                    <img src="../burger.svg" className="w-8" />
-                </div>
-                <p>ZCod3r</p>
+                  >
+                    {user.fullName}
+                  </div>
+                ))
+              )}
             </div>
-            <div className="flex text-white gap-4 items-center">
-                <div className="h-12 w-12 rounded-full cursor-pointer ml-4 overflow-hidden flex items-center justify-center border-2 border-white" onClick={()=>{
-                  setIsSearchOpen(!isSearchOpen);
-                }}>
-                    <img src="/userSearch.svg" className="h-8" />
-                </div>
-
-                <div
-                    className="h-12 w-12 rounded-full cursor-pointer ml-4 overflow-hidden"
-                    onClick={() => {
-                        setIsOpen(!isOpen);
-                    }}
-                >
-                    <img
-                        src={profileImg ? profileImg : `profile.png`}
-                        referrerPolicy="no-referrer"
-                    />
-                </div>
-                {isOpen && (
-                    <Modal
-                        onClose={() => {
-                            setIsOpen(false);
-                        }}
-                        userId={userId}
-                    />
-                )}
-                {
-                    isSearchOpen && (
-                        <SearchUser
-                            onClose={() => {
-                                setIsSearchOpen(false);
-                            }}
-                        />
-                    )
-                }
-            </div>
+          )}
         </div>
-    );
+
+        {/* Icons */}
+        <div className="flex items-center gap-4">
+          {/* Search icon for mobile */}
+          <div className="md:hidden cursor-pointer" onClick={() => setShowSearch(!showSearch)}>
+            <img src="/userSearch.svg" className="w-6 h-6" />
+          </div>
+
+          {/* Profile */}
+          <div className="relative">
+            <img
+              src={profileImg}
+              alt="profile"
+              className="w-10 h-10 rounded-full border-2 border-yellowgreen cursor-pointer"
+              onClick={() => setShowProfileMenu(!showProfileMenu)}
+              referrerPolicy="no-referrer"
+            />
+            {showProfileMenu && (
+              <div
+                ref={menuRef}
+                className="absolute right-0 mt-2 w-40 bg-black border border-yellowgreen rounded-lg shadow-lg text-white overflow-hidden z-50"
+              >
+                <Link
+                  to={`/profile/${username}`}
+                  className="block px-4 py-2 hover:bg-yellowgreen hover:text-black"
+                >
+                  Profile
+                </Link>
+                <div
+                  onClick={handleLogout}
+                  className="block px-4 py-2 hover:bg-yellowgreen hover:text-black cursor-pointer"
+                >
+                  Logout
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Search dropdown for mobile */}
+      {showSearch && (
+        <div className="px-6 pb-4 md:hidden">
+          <input
+            type="text"
+            className="bg-[#1a1a1a] text-white w-full py-2 px-4 rounded-lg border border-yellowgreen focus:outline-none focus:ring-2 focus:ring-yellowgreen"
+            placeholder="Search users..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+        </div>
+      )}
+    </nav>
+  );
 };
 
 export default Navbar;

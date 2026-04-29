@@ -7,6 +7,12 @@ const asyncHandler = (requestHandler) => {
     };
 };
 
+//promises
+//async await
+//try catch
+//higher order functions
+//
+
 
 //Using try catch and higher order function, In this case actually we are making a wrapper function
 

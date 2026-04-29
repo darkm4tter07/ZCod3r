@@ -10,23 +10,6 @@ const CodeEditor = () => {
   return (
     <div className="h-[90vh] flex-col p-4">
       <div className="flex justify-between">
-        
-        {/* {open && (
-          <div className="absolute bg-white border-2 border-black p-2 rounded-lg">
-            {languages.map((lang, index) => (
-              <div
-                key={index}
-                className="cursor-pointer"
-                onClick={() => {
-                  setlanguage(lang[0]);
-                  setOpen(false);
-                }}
-              >
-                {lang[0]}
-              </div>
-            ))}
-          </div>
-        )} */}
         <div>
           <select
             className="m-2 border-2 border-black rounded-lg p-1"
@@ -51,7 +34,6 @@ const CodeEditor = () => {
         onChange={(value) => setCode(value)}
         height="60%"
       />
-      
     </div>
   );
 };

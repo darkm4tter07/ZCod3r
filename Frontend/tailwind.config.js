@@ -5,7 +5,14 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        mono: ['JetBrains Mono', 'monospace'],
+      },
+      colors: {
+        yellowgreen: '#9ACD32',
+      },
+    },
   },
   plugins: [
     function ({addUtilities}){
